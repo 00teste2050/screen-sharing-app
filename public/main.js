@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
 
-const socket = io('https://your-server-url.com');
+const socket = io('https://screen-sharing-app.onrender.com');
 const shareScreenBtn = document.getElementById('shareScreen');
 
 shareScreenBtn.addEventListener('click', async () => {
