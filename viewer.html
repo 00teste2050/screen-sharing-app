@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viewing Shared Screen</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Viewing Shared Screen</h1>
+        <video id="remoteVideo" autoplay></video>
+    </div>
+    <script type="importmap">
+        {
+            "imports": {
+                "socket.io-client": "https://cdn.socket.io/4.6.0/socket.io.esm.min.js"
+            }
+        }
+    </script>
+    <script type="module" src="viewer.js"></script>
+</body>
+</html>
+

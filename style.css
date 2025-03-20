@@ -1,0 +1,63 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #6e8efb, #a777e3);
+}
+
+.container {
+    text-align: center;
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 2rem;
+}
+
+.btn {
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #45a049;
+}
+
+video {
+    max-width: 100%;
+    border-radius: 5px;
+    margin-top: 1rem;
+}
+
+#shareLink {
+    margin-top: 1rem;
+    padding: 0.5rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.error-message {
+    color: #ff4444;
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #ffebee;
+    border-radius: 5px;
+    display: none;
+}
+
+#copyLink.copied {
+    background-color: #45a049;
+}
