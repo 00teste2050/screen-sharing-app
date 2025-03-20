@@ -1,48 +1,43 @@
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
-const cors = require("cors");
 const path = require("path");
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "*",
+        origin: "*", // Permite conexões de qualquer origem (ajuste se necessário)
         methods: ["GET", "POST"]
     }
 });
 
-// Servir arquivos estáticos da pasta public
+const PORT = process.env.PORT || 10000;
+
+// Servir arquivos estáticos da pasta "public"
 app.use(express.static(path.join(__dirname, "public")));
 
+// Rota principal (opcional)
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+// Configuração do WebSocket
 io.on("connection", (socket) => {
-    console.log("Novo usuário conectado:", socket.id);
+    console.log(`Novo cliente conectado: ${socket.id}`);
 
     socket.on("join-room", (roomId) => {
         socket.join(roomId);
         console.log(`Usuário ${socket.id} entrou na sala ${roomId}`);
-    });
-
-    socket.on("offer", ({ roomId, offer }) => {
-        socket.to(roomId).emit("offer", offer);
-    });
-
-    socket.on("answer", ({ roomId, answer }) => {
-        socket.to(roomId).emit("answer", answer);
-    });
-
-    socket.on("ice-candidate", ({ roomId, candidate }) => {
-        socket.to(roomId).emit("ice-candidate", candidate);
+        io.to(roomId).emit("user-connected", socket.id);
     });
 
     socket.on("disconnect", () => {
-        console.log("Usuário desconectado:", socket.id);
+        console.log(`Cliente desconectado: ${socket.id}`);
     });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
+// Inicia o servidor
+server.listen(PORT, () => {
+    console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });
-
