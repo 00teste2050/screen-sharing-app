@@ -1,7 +1,7 @@
 import { CONFIG } from './config.js';
 import { io } from 'socket.io-client';
 
-const socket = io(CONFIG.SOCKET_URL);
+const socket = io(CONFIG.SOCKET_URL, CONFIG.SOCKET_OPTIONS);
 const remoteVideo = document.getElementById('remoteVideo');
 let peerConnection;
 

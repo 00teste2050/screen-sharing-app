@@ -22,18 +22,58 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// Configuração do WebSocket
+// Mapeia as salas e as conexões
+const broadcasters = new Map();
+
 io.on("connection", (socket) => {
     console.log(`Novo cliente conectado: ${socket.id}`);
 
-    socket.on("join-room", (roomId) => {
+    socket.on("join-room", (roomId, role) => {
         socket.join(roomId);
-        console.log(`Usuário ${socket.id} entrou na sala ${roomId}`);
-        io.to(roomId).emit("user-connected", socket.id);
+        console.log(`Usuário ${socket.id} entrou na sala ${roomId} como ${role}`);
+
+        if (role === "broadcaster") {
+            broadcasters.set(roomId, socket.id);
+            socket.broadcast.to(roomId).emit("broadcaster-ready");
+        } else if (role === "viewer") {
+            const broadcasterId = broadcasters.get(roomId);
+            if (broadcasterId) {
+                io.to(broadcasterId).emit("viewer-joined", socket.id);
+            }
+        }
+    });
+
+    socket.on("broadcaster-offer", ({ offer, viewerId }) => {
+        io.to(viewerId).emit("broadcaster-offer", { offer });
+    });
+
+    socket.on("viewer-answer", ({ answer, roomId }) => {
+        const broadcasterId = broadcasters.get(roomId);
+        if (broadcasterId) {
+            io.to(broadcasterId).emit("viewer-answer", { answer, viewerId: socket.id });
+        }
+    });
+
+    socket.on("broadcaster-ice", ({ candidate, viewerId }) => {
+        io.to(viewerId).emit("broadcaster-ice", { candidate });
+    });
+
+    socket.on("viewer-ice", ({ candidate, roomId }) => {
+        const broadcasterId = broadcasters.get(roomId);
+        if (broadcasterId) {
+            io.to(broadcasterId).emit("viewer-ice", { candidate, viewerId: socket.id });
+        }
     });
 
     socket.on("disconnect", () => {
         console.log(`Cliente desconectado: ${socket.id}`);
+
+        broadcasters.forEach((broadcasterId, roomId) => {
+            if (broadcasterId === socket.id) {
+                broadcasters.delete(roomId);
+                io.to(roomId).emit("broadcaster-disconnected");
+            }
+        });
     });
 });
 
